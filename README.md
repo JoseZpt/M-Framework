@@ -19,3 +19,5 @@ M-Framework es una herramienta que instala metasploit framework en cualquier ver
 * ` cd M-Framework`
 * ` chmod 777 M-framework`
 * ` bash M-framework `
+
+> Después de crear el payload, la información queda guardada en un archivo llamada *exploit
