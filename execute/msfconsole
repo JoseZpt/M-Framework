@@ -1,0 +1,4 @@
+#!/bin/bash
+MSF="/data/data/com.termux/files/usr/opt/metasploit-framework"
+pg_ctl -D /data/data/com.termux/files/usr/var/lib/postgresql start
+exec ruby "${MSF}/msfconsole" "$@"
